@@ -27,3 +27,5 @@ def get_db():
 async def home_page(request: Request):
 
     return templates.TemplateResponse("home.html", {"request": request})
+
+pass
