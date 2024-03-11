@@ -5,10 +5,11 @@ from starlette.staticfiles import StaticFiles
 from fastapi import FastAPI, Depends, Request
 import models
 from database import SessionLocal, engine
+from routers import auth
 
 app = FastAPI()
 
-# models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -21,6 +22,9 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+app.include_router(auth.router)
 
 
 @app.get("/", response_class=HTMLResponse)
