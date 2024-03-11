@@ -28,4 +28,8 @@ async def home_page(request: Request):
 
     return templates.TemplateResponse("home.html", {"request": request})
 
-pass
+
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page(request: Request):
+
+    return templates.TemplateResponse("contact-form.html", {"request": request})
