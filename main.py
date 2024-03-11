@@ -8,7 +8,7 @@ from database import SessionLocal, engine
 
 app = FastAPI()
 
-# models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
