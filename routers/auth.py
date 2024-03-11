@@ -5,7 +5,6 @@ from starlette.staticfiles import StaticFiles
 from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
 import models
 from database import SessionLocal, engine
-from routers import auth
 
 templates = Jinja2Templates(directory="templates")
 

@@ -5,7 +5,7 @@ from starlette.staticfiles import StaticFiles
 from fastapi import FastAPI, Depends, Request
 import models
 from database import SessionLocal, engine
-from routers import auth
+from routers import auth, contact
 
 app = FastAPI()
 
@@ -25,15 +25,10 @@ def get_db():
 
 
 app.include_router(auth.router)
+app.include_router(contact.router)
 
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
 
     return templates.TemplateResponse("home.html", {"request": request})
-
-
-@app.get("/contact", response_class=HTMLResponse)
-async def contact_page(request: Request):
-
-    return templates.TemplateResponse("contact-form.html", {"request": request})
