@@ -28,3 +28,8 @@ def get_db():
 @router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+
+
+@router.get("/register", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
