@@ -2,18 +2,20 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
-from fastapi import FastAPI, Depends, Request
+from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
 import models
 from database import SessionLocal, engine
-from routers import auth, customer
+from routers import auth
 
-app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 models.Base.metadata.create_all(bind=engine)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-templates = Jinja2Templates(directory="templates")
+router = APIRouter(
+    prefix="/customer",
+    tags=["customer"],
+    responses={401: {"user": "Not authorized"}}
+)
 
 
 def get_db():
@@ -24,11 +26,7 @@ def get_db():
         db.close()
 
 
-app.include_router(auth.router)
-app.include_router(customer.router)
-
-
-@app.get("/", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def home_page(request: Request):
 
-    return templates.TemplateResponse("home.html", {"request": request})
+    return templates.TemplateResponse("customer.html", {"request": request})

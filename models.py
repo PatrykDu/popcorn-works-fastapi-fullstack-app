@@ -12,3 +12,4 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     hashed_password = Column(String)
+    role = Column(String, default='customer')

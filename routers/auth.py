@@ -30,6 +30,24 @@ async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
+@router.post("/login", response_class=HTMLResponse)
+async def register_user(request: Request, username: str = Form(...),
+                        password: str = Form(...), db: Session = Depends(get_db)):
+
+    # checks if username exist
+    found_user_model = db.query(models.User).filter(
+        models.User.username == username).first()
+    if found_user_model is None:
+        msg = "Username is not registered"
+        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+
+    if found_user_model.hashed_password != password:
+        msg = "Wrong Password!"
+        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+
+    return templates.TemplateResponse("customer.html", {"request": request})
+
+
 @router.get("/register", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
