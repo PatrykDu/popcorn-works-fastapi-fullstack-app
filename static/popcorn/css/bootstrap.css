@@ -6045,6 +6045,7 @@ a.close.disabled {
 }
 
 .tooltip-inner {
+  position: absolute;
   max-width: 200px;
   padding: 0.25rem 0.5rem;
   color: #fff;
@@ -6370,9 +6371,14 @@ a.close.disabled {
   -ms-flex-pack: center;
   justify-content: center;
   padding-left: 0;
-  margin-right: 15%;
-  margin-left: 15%;
+  margin-right: 40%;
+  margin-left: 40%;
   list-style: none;
+  color: #fff;
+  text-align: center;
+  background-color: #f39f32;
+  border-radius: 1rem;
+  font-weight: bold;
 }
 
 .carousel-indicators li {
