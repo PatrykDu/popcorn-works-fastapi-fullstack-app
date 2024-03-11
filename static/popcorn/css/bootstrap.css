@@ -7116,11 +7116,8 @@ button.bg-success:focus {
 }
 
 .bg-img {
-  /* The image used */
-  /* background-image: url("/static/popcorn/photos/grzesiek.jpeg"); */
-
   /* Control the height of the image */
-  min-height: 320px;
+  min-height: auto;
 
   /* Center and scale the image nicely */
   background-position: center;
