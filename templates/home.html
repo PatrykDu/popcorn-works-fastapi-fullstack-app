@@ -1,6 +1,10 @@
 {% include 'layout.html' %}
-<a class="carousel-indicators" style="display: flex; justify-content: center; margin-bottom: 350px" href="/register">
-    &nbsp<br>Create an account to schedule an appointment<br>&nbsp</a>
-<div style="display: flex; justify-content: center; height: auto;">
-    <img src="{{ url_for('static', path='/popcorn/photos/grzesiek.jpeg') }}" alt="Logo">
+<div class="container">
+    <div class="bg-img" style="min-height: 1024px; background-image: url('/static/popcorn/photos/grzesiek.jpeg');"
+        alt="bg">
+        <button onclick="window.location.href='/register'" type="button" class="btn-special"
+            style="margin: auto; position: absolute; bottom: 20%; left: 0; right: 0; padding: 20px; font-size: 21px;">
+            Create an account to schedule an appointment
+        </button>
+    </div>
 </div>
