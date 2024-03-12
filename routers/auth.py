@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 from starlette.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
@@ -11,11 +10,9 @@ from fastapi import Depends, HTTPException, status, APIRouter, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 import models
 from database import SessionLocal, engine
-from utils import get_db
+from utils import get_db, SECRET_KEY, ALGORITHM
 from jose import jwt, JWTError
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
-ALGORITHM = "HS256"
 
 templates = Jinja2Templates(directory="templates")
 
