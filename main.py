@@ -5,7 +5,7 @@ from starlette.staticfiles import StaticFiles
 from fastapi import FastAPI, Depends, Request
 import models
 from database import SessionLocal, engine
-from routers import auth, customer
+from routers import auth, customer, mechanic
 from utils import get_db
 
 app = FastAPI()
@@ -19,6 +19,7 @@ templates = Jinja2Templates(directory="templates")
 
 app.include_router(auth.router)
 app.include_router(customer.router)
+app.include_router(mechanic.router)
 
 
 @app.get("/", response_class=HTMLResponse)
