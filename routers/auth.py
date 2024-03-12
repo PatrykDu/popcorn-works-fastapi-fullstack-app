@@ -10,7 +10,7 @@ from fastapi import Depends, HTTPException, status, APIRouter, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 import models
 from database import SessionLocal, engine
-from utils import get_db, SECRET_KEY, ALGORITHM
+from utils import get_db, SECRET_KEY, ALGORITHM, get_current_user
 from jose import jwt, JWTError
 
 
@@ -102,7 +102,7 @@ async def login_user(request: Request, username: str = Form(...), password: str 
 
         if not validate_user_cookie:
             msg = "Incorrect Username or Password"
-            return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+            return templates.TemplateResponse("login.html", {"request": request, "msg": msg, "user": user_model})
         return response
     except HTTPException:
         msg = "Unknown Error"
@@ -148,3 +148,12 @@ async def register_user(request: Request, email: str = Form(...), username: str 
 
     msg = "User successfully created"
     return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+
+
+@router.get("/logout")
+async def logout(request: Request):
+    msg = "Logout Successful"
+    response = templates.TemplateResponse(
+        "login.html", {"request": request, "msg": msg})
+    response.delete_cookie(key="access_token")
+    return response

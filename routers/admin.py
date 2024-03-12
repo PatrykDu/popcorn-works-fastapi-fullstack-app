@@ -5,7 +5,7 @@ from starlette.staticfiles import StaticFiles
 from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
 import models
 from database import SessionLocal, engine
-from utils import get_db, check_user_role_and_redirect
+from utils import get_db, check_user_role_and_redirect, get_current_user
 
 templates = Jinja2Templates(directory="templates")
 
@@ -26,4 +26,6 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
     if redirection["is_needed"]:
         return redirection['redirection']
 
-    return templates.TemplateResponse("admin.html", {"request": request})
+    user = get_current_user(request)
+
+    return templates.TemplateResponse("admin.html", {"request": request, "user": user})

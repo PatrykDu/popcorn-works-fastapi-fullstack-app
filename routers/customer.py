@@ -27,4 +27,6 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
     if redirection["is_needed"]:
         return redirection['redirection']
 
-    return templates.TemplateResponse("customer.html", {"request": request})
+    user = get_current_user(request)
+
+    return templates.TemplateResponse("customer.html", {"request": request, "user": user})
