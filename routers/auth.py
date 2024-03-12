@@ -65,6 +65,10 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
 
 @router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
+
+    user = get_current_user(request)
+    if user != None:
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
     return templates.TemplateResponse("login.html", {"request": request})
 
 
@@ -102,6 +106,10 @@ async def login_user(request: Request, username: str = Form(...), password: str 
 
 @router.get("/register", response_class=HTMLResponse)
 async def login_page(request: Request):
+
+    user = get_current_user(request)
+    if user != None:
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
     return templates.TemplateResponse("register.html", {"request": request})
 
 
