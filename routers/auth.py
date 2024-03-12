@@ -87,18 +87,19 @@ async def login_user(request: Request, username: str = Form(...), password: str 
 
         user_model = db.query(models.User).filter(
             models.User.username == username).first()
+        validate_user_cookie = False
+        if user_model:
+            if user_model.role == 'mechanic':
+                response = RedirectResponse(
+                    url="/mechanic", status_code=status.HTTP_302_FOUND)
+            if user_model.role == 'customer':
+                response = RedirectResponse(
+                    url="/customer", status_code=status.HTTP_302_FOUND)
+            if user_model.role == 'admin':
+                response = RedirectResponse(
+                    url="/admin", status_code=status.HTTP_302_FOUND)
 
-        if user_model.role == 'mechanic':
-            response = RedirectResponse(
-                url="/mechanic", status_code=status.HTTP_302_FOUND)
-        if user_model.role == 'customer':
-            response = RedirectResponse(
-                url="/customer", status_code=status.HTTP_302_FOUND)
-        if user_model.role == 'admin':
-            response = RedirectResponse(
-                url="/admin", status_code=status.HTTP_302_FOUND)
-
-        validate_user_cookie = await login_for_access_token(response=response, form_data=form_data, db=db)
+            validate_user_cookie = await login_for_access_token(response=response, form_data=form_data, db=db)
 
         if not validate_user_cookie:
             msg = "Incorrect Username or Password"
