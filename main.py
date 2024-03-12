@@ -6,6 +6,7 @@ from fastapi import FastAPI, Depends, Request
 import models
 from database import SessionLocal, engine
 from routers import auth, customer
+from utils import get_db
 
 app = FastAPI()
 
@@ -14,14 +15,6 @@ models.Base.metadata.create_all(bind=engine)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
-
-
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
 
 
 app.include_router(auth.router)

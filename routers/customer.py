@@ -5,7 +5,7 @@ from starlette.staticfiles import StaticFiles
 from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
 import models
 from database import SessionLocal, engine
-from routers import auth
+from utils import get_db
 
 templates = Jinja2Templates(directory="templates")
 
@@ -16,14 +16,6 @@ router = APIRouter(
     tags=["customer"],
     responses={401: {"user": "Not authorized"}}
 )
-
-
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
 
 
 @router.get("/", response_class=HTMLResponse)
