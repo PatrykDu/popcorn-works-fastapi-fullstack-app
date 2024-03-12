@@ -16,22 +16,12 @@ from jose import jwt, JWTError
 
 templates = Jinja2Templates(directory="templates")
 
-bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter(
     tags=["auth"],
     responses={401: {"user": "Not authorized"}}
 )
-
-
-# def get_password_hash(password):
-#     return bcrypt_context.hash(password)
-
-
-# def verify_password(plain_password, hashed_password):
-#     return bcrypt_context.verify(plain_password, hashed_password)
 
 
 def authenticate_user(username: str, password: str, db):
