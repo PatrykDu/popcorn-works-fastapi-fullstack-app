@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.get("/", response_class=HTMLResponse)
-async def home_page(request: Request, db: Session = Depends(get_db)):
+async def customer_home_page(request: Request, db: Session = Depends(get_db)):
     """Get request for starting customer page after beeing logged in"""
 
     # checks if customer is logged in (if different role then redirection)

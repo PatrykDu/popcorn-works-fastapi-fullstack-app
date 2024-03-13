@@ -19,7 +19,7 @@ router = APIRouter(
 
 
 @router.get("/", response_class=HTMLResponse)
-async def home_page(request: Request, db: Session = Depends(get_db)):
+async def mechanic_home_page(request: Request, db: Session = Depends(get_db)):
     """Get request for starting mechanic page after beeing logged in"""
 
     # checks if customer is logged in (if different role then redirection)
@@ -38,7 +38,7 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/repairs", response_class=HTMLResponse)
-async def home_page(request: Request, db: Session = Depends(get_db)):
+async def repairs_page_for_mechanic(request: Request, db: Session = Depends(get_db)):
     """Get request for starting mechanic page after beeing logged in"""
 
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
@@ -54,7 +54,7 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/storage", response_class=HTMLResponse)
-async def home_page(request: Request, db: Session = Depends(get_db)):
+async def storage_page(request: Request, db: Session = Depends(get_db)):
     """Get request for starting mechanic page after beeing logged in"""
 
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
@@ -70,7 +70,7 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/calendar", response_class=HTMLResponse)
-async def home_page(request: Request, db: Session = Depends(get_db)):
+async def calendar_page_for_mechanic(request: Request, db: Session = Depends(get_db)):
     """Get request for starting mechanic page after beeing logged in"""
 
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
