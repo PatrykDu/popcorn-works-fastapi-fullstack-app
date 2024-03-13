@@ -17,3 +17,11 @@ class User(Base):
     last_name = Column(String)
     hashed_password = Column(String)
     role = Column(String, default='customer')
+
+
+class Message(Base):
+    __tablename__ = "message"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, index=True)
+    message = Column(String)
