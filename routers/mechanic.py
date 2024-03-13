@@ -27,6 +27,9 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
     if redirection["is_needed"]:
         return redirection['redirection']
 
-    user = get_current_user(request)
+    user_decoded = get_current_user(request)
+
+    user = db.query(models.User).filter(
+        models.User.username == user_decoded['username']).first()
 
     return templates.TemplateResponse("mechanic.html", {"request": request, "user": user})
