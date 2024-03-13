@@ -11,14 +11,23 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
+                {% if not user %}
                 <li class="nav-item active">
                     <a class="nav-link" href="/contact">Contact us </a>
                 </li>
+                {% endif %}
             </ul>
             <ul class="navbar-nav ml-auto">
+                {% if not user %}
                 <li class="nav-item m-1">
                     <a type="button" class="btn btn-outline-light" href="/login">Login</a>
                 </li>
+                {% endif %}
+                {% if user %}
+                <li class="nav-item m-1">
+                    <a type="button" class="btn btn-outline-light" href="/logout">Logout</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </nav>
