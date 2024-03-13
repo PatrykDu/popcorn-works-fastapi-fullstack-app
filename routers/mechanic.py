@@ -32,4 +32,6 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
 
-    return templates.TemplateResponse("mechanic.html", {"request": request, "user": user})
+    messages = db.query(models.Message).all()
+
+    return templates.TemplateResponse("mechanic.html", {"request": request, "user": user, "messages": messages})

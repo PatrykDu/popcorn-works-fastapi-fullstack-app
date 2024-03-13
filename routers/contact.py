@@ -52,3 +52,16 @@ async def message_form(request: Request, email: str = Form(...),
     msg = "Message has been sent."
     return templates.TemplateResponse("contact-form.html",
                                       {"request": request, "msg": msg})
+
+
+@router.get("/delete/{message_id}", response_class=HTMLResponse)
+async def message_form(request: Request, message_id: str,
+                       db: Session = Depends(get_db)):
+
+    message_model_to_delete = db.query(models.Message).filter(
+        models.Message.id == message_id).first()
+
+    db.delete(message_model_to_delete)
+    db.commit()
+
+    return RedirectResponse(url="/mechanic", status_code=status.HTTP_302_FOUND)
