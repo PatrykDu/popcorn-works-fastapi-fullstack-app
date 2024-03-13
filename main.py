@@ -40,6 +40,6 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
         if user_model.role == "mechanic":
             return RedirectResponse(url="/mechanic", status_code=status.HTTP_302_FOUND)
         if user_model.role == "admin":
-            return RedirectResponse(url="/mechanic", status_code=status.HTTP_302_FOUND)
+            return RedirectResponse(url="/admin", status_code=status.HTTP_302_FOUND)
 
     return templates.TemplateResponse("home.html", {"request": request, "user": user})
