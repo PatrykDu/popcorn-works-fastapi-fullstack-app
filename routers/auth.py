@@ -25,6 +25,7 @@ router = APIRouter(
 
 
 def authenticate_user(username: str, password: str, db):
+    """Checks if user provided right password."""
     user = db.query(models.User).filter(
         models.User.username == username).first()
 
@@ -37,6 +38,7 @@ def authenticate_user(username: str, password: str, db):
 
 def create_access_token(username: str, user_id: int,
                         expires_delta: Optional[timedelta] = None):
+    """Creates access token based on provided user data."""
 
     encode = {"sub": username, "id": user_id}
     if expires_delta:
@@ -50,6 +52,7 @@ def create_access_token(username: str, user_id: int,
 @router.post("/token")
 async def login_for_access_token(response: Response, form_data: OAuth2PasswordRequestForm = Depends(),
                                  db: Session = Depends(get_db)):
+    """Post request for token fetching."""
     user = authenticate_user(form_data['username'], form_data['password'], db)
     if not user:
         return False
@@ -65,6 +68,7 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
 
 @router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
+    """Get request for login page endpoint."""
 
     user = get_current_user(request)
     if user != None:
@@ -74,6 +78,7 @@ async def login_page(request: Request):
 
 @router.post("/login", response_class=HTMLResponse)
 async def login_user(request: Request, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+    """Post request for login user."""
     try:
 
         form_data = {"request": request,
@@ -106,6 +111,7 @@ async def login_user(request: Request, username: str = Form(...), password: str 
 
 @router.get("/register", response_class=HTMLResponse)
 async def login_page(request: Request):
+    """Get request for register page endpoint."""
 
     user = get_current_user(request)
     if user != None:
@@ -118,6 +124,7 @@ async def register_user(request: Request, email: str = Form(...), username: str 
                         firstname: str = Form(...), lastname: str = Form(...),
                         password: str = Form(...), password2: str = Form(...),
                         db: Session = Depends(get_db)):
+    """Post request for register user."""
 
     # checks if username in DB
     validation1 = db.query(models.User).filter(
@@ -151,6 +158,7 @@ async def register_user(request: Request, email: str = Form(...), username: str 
 
 @router.get("/logout")
 async def logout(request: Request):
+    """Get request for logout user endpoint and clear cookie with login session"""
     msg = "Logout Successful"
     response = templates.TemplateResponse(
         "login.html", {"request": request, "msg": msg})

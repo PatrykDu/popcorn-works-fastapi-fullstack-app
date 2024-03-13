@@ -13,6 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 
 
 def get_db():
+    """Connection with DB"""
     try:
         db = SessionLocal()
         yield db
@@ -21,6 +22,7 @@ def get_db():
 
 
 def get_current_user(request: Request):
+    """Fetches data of user, data is based on the current session cookie"""
     try:
         token = request.cookies.get("access_token")
         if token is None:
@@ -36,6 +38,9 @@ def get_current_user(request: Request):
 
 
 def check_user_role_and_redirect(request: Request, db, role: str):
+    """Checks if the endpoint tried to be connected to is allowed to be fetches
+    by current user. If endpoint is not allowed, it redirects user to his
+    staring page."""
     user = get_current_user(request)
 
     redirection = {"is_needed": False, 'redirection': None}

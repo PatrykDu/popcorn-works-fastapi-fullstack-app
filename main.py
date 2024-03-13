@@ -26,6 +26,9 @@ app.include_router(admin.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def home_page(request: Request, db: Session = Depends(get_db)):
+    """Get request of the home page. If user is logged in it will redirect
+    him to his starting page, so home screen is available only for
+    not logged in users."""
 
     user = get_current_user(request)
 
