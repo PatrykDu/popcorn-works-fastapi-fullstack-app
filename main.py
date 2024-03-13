@@ -6,7 +6,7 @@ from starlette.staticfiles import StaticFiles
 from fastapi import FastAPI, Depends, Request, status
 import models
 from database import SessionLocal, engine
-from routers import auth, customer, mechanic, admin
+from routers import auth, customer, mechanic, admin, contact
 from utils import get_db, get_current_user, check_user_role_and_redirect
 
 app = FastAPI()
@@ -22,6 +22,7 @@ app.include_router(auth.router)
 app.include_router(customer.router)
 app.include_router(mechanic.router)
 app.include_router(admin.router)
+app.include_router(contact.router)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -40,6 +41,6 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
         if user_model.role == "mechanic":
             return RedirectResponse(url="/mechanic", status_code=status.HTTP_302_FOUND)
         if user_model.role == "admin":
-            return RedirectResponse(url="/mechanic", status_code=status.HTTP_302_FOUND)
+            return RedirectResponse(url="/admin", status_code=status.HTTP_302_FOUND)
 
     return templates.TemplateResponse("home.html", {"request": request, "user": user})
