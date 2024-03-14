@@ -11200,3 +11200,63 @@ a.text-dark:focus {
   }
 
 }
+
+.corner-element {
+  position: absolute;
+  width: 40%;
+  height: 25%;
+  background-color: #f39f32;
+  border: 2px solid #000;
+  box-sizing: border-box;
+}
+
+.top-left-mechanic {
+  top: 0;
+  left: 0;
+  margin-left: 5%;
+  margin-top: 100px;
+}
+
+.top-right-mechanic {
+  top: 0;
+  right: 0;
+  margin-top: 100px;
+  margin-right: 5%;
+}
+
+.bottom-mechanic {
+  bottom: 0;
+  left: 0;
+  margin-left: 5%;
+  margin-bottom: 250px;
+  width: 90%;
+  height: 35%;
+}
+
+.corner-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 5px;
+}
+
+.scrollable-mechanic-list {
+  overflow: auto;
+  max-height: 80%;
+  padding: 10px;
+}
+
+.message-box {
+  border-radius: 25px;
+  background: gainsboro;
+  padding: 1em;
+  margin-bottom: 1%;
+  width: 100%;
+  height: 5%p;
+}
+
+.email_box {
+  border-radius: 25px;
+  text-align: center;
+  height: 3em;
+}

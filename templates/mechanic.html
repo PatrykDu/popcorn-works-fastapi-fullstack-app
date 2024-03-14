@@ -1,1 +1,56 @@
 {% include 'layout.html' %}
+
+<div>
+
+    <div class="corner-element top-left-mechanic">
+        <a href="/mechanic/repairs">
+            <div class="corner-title">Naprawy</div>
+        </a>
+        <div class="scrollable-mechanic-list">
+            <ul>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+                <li>Test Item</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="corner-element top-right-mechanic">
+        <div class="corner-title">Wiadomości</div>
+        <div class="scrollable-mechanic-list">
+            <ul>
+                {% for message in messages %}
+                <li style="list-style: none;">
+                    <div class="message-box">
+                        <div class="email_box" style="background: #ffc078;">
+                            <strong>{{ message.email}}</strong>
+                            <a href="/contact/delete/{{message.id}}"><img
+                                    src="{{ url_for('static', path='/popcorn/photos/trash.png') }}" alt="Logo"
+                                    style="width: 3em;;"></a>
+                        </div>
+                        <div>{{ message.message}}</div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="corner-element bottom-mechanic">
+        <a href="/mechanic/storage">
+            <div class="corner-title">Kalendarz</div>
+        </a>
+        <div>Wielkie XD jak to zrobić xD</div>
+    </div>
+
+</div>
+
+</div>

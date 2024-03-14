@@ -41,6 +41,7 @@ async def contact_page(request: Request, db: Session = Depends(get_db)):
 async def message_form(request: Request, email: str = Form(...),
                        message: str = Form(...),
                        db: Session = Depends(get_db)):
+    """POST request for contact form"""
 
     message_model = models.Message()
     message_model.email = email
@@ -52,3 +53,17 @@ async def message_form(request: Request, email: str = Form(...),
     msg = "Message has been sent."
     return templates.TemplateResponse("contact-form.html",
                                       {"request": request, "msg": msg})
+
+
+@router.get("/delete/{message_id}", response_class=HTMLResponse)
+async def delete_message(request: Request, message_id: str,
+                         db: Session = Depends(get_db)):
+    """GET request for deleting specific message from DB"""
+
+    message_model_to_delete = db.query(models.Message).filter(
+        models.Message.id == message_id).first()
+
+    db.delete(message_model_to_delete)
+    db.commit()
+
+    return RedirectResponse(url="/mechanic", status_code=status.HTTP_302_FOUND)

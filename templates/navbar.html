@@ -9,13 +9,28 @@
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
+
+
+                <!-- button contant visible only when not logged in -->
                 {% if not user %}
                 <li class="nav-item active">
                     <a class="nav-link" href="/contact">Contact us </a>
                 </li>
                 {% endif %}
+
+                <!-- button magazyn czesci visible only for mechanic role user -->
+                {% if user %}
+                {% if user.role == "mechanic" %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="/mechanic/storage">Magazyn Części </a>
+                </li>
+                {% endif %}
+                {% endif %}
+
+
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if not user %}
