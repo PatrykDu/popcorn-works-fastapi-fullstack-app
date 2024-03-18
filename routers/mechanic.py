@@ -52,7 +52,47 @@ async def repairs_page_for_mechanic(request: Request, db: Session = Depends(get_
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
 
-    return templates.TemplateResponse("repairs_mechanic.html", {"request": request, "user": user})
+    found_customers = db.query(models.User).filter(
+        models.User.role == 'customer')
+
+    repairs = db.query(models.Repair).all()
+
+    return templates.TemplateResponse("repairs_mechanic.html", {"request": request, "user": user,
+                                                                "customers": found_customers,
+                                                                "repairs": repairs})
+
+
+@router.post("/repairs", response_class=HTMLResponse)
+async def add_new_repair(request: Request, car_name: str = Form(...), customer_id: int = Form(...),
+                         start_of_repair: str = Form(...), end_of_repair: str = Form(...),
+                         db: Session = Depends(get_db)):
+    """Post request for adding new repair to the DB"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    user_decoded = get_current_user(request)
+
+    user = db.query(models.User).filter(
+        models.User.username == user_decoded['username']).first()
+
+    repair_model = models.Repair()
+
+    repair_model.car_name = car_name
+    repair_model.start_date = start_of_repair
+    repair_model.end_date = end_of_repair
+    repair_model.active = True
+    repair_model.customer_id = customer_id
+
+    try:
+        db.add(repair_model)
+        db.commit()
+        msg = 'Dodano nowy termin'
+    except Exception as err:
+        msg = f"błąd podczas dodawania: {err}"
+
+    return templates.TemplateResponse("repairs_mechanic.html", {"request": request, "user": user, "msg": msg})
 
 
 @router.get("/storage", response_class=HTMLResponse)
@@ -95,7 +135,7 @@ async def storage_page(request: Request, nr_oem: str | None = None,
         phrases = search_name.split(' ')
         searched_phrases = [phase.casefold() for phase in phrases]
         for part in found_parts:
-            part_words: List[str] = part.name.split()
+            part_words: List[str] = part.name.split(' ')
             part_words = [word.casefold() for word in part_words]
             if any(phrase in searched_phrases for phrase in part_words):
                 parts.append(part)
@@ -138,7 +178,6 @@ async def add_new_part(request: Request, new_part_name: str = Form(...),
         msg = f"błąd podczas dodawania: {err}"
 
     return templates.TemplateResponse("storage.html", {"request": request, "user": user, "msg": msg})
-    # return RedirectResponse(url="/storage", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/calendar", response_class=HTMLResponse)
