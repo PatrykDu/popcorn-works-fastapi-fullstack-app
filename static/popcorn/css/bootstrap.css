@@ -11260,3 +11260,8 @@ a.text-dark:focus {
   text-align: center;
   height: 3em;
 }
+
+.car_part_box {
+  border-radius: 25px;
+  height: 3em;
+}
