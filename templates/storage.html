@@ -5,11 +5,14 @@
 <!-- add a new part -->
 <div style="background: #f39f32; margin-bottom: 3em; margin-top: 1em;">
     <div style="text-align: center;"><strong>Dodaj nową część</strong></div>
-    <form style="display: inline-block; margin-left: 15%;">
+    <form action="" method="post" style="display: inline-block; margin-left: 15%;">
         <textarea id="new_part_name" name="new_part_name" rows="1" cols="30" placeholder="Nazwa części"></textarea>
         <textarea id="new_part_amount" name="new_part_amount" rows="1" cols="10" placeholder="Ilość sztuk"></textarea>
+        <textarea id="new_part_engine_type" name="new_part_engine_type" rows="1" cols="10"
+            placeholder="Typ silnika"></textarea>
         <textarea id="new_part_nr_oem" name="new_part_nr_oem" rows="1" cols="30" placeholder="Nr OEM"></textarea>
         <textarea id="new_part_qr_code" name="new_part_qr_code" rows="1" cols="30" placeholder="QR code"></textarea>
+        <textarea id="new_part_price" name="new_part_price" rows="1" cols="15" placeholder="Cena"></textarea>
         <input style="display: inline-block; padding-top: 1.5em;" type="submit" value="Dodaj część">
     </form>
 </div>
@@ -38,19 +41,37 @@
     <div style="display: inline-block; width: 10%; min-width: 100px;">Cena</div>
 </div>
 
-
+{% if parts %}
 <div class="scrollable-mechanic-list">
     <ul>
-        {% for message in range(20) %}
+        {% for part in parts %}
         <li class="car_part_box " style="list-style: none; padding: 1em;">
             <div class="wrapper" style="background: #ffc078; padding-left: 3em;">
-                <div style="display: inline-block; width: 30%; min-width: 200px;">Test part name</div>
-                <div style="display: inline-block; width: 10%; min-width: 100px;">6</div>
-                <div style="display: inline-block; width: 10%; min-width: 100px;">1.6</div>
-                <div style="display: inline-block; width: 10%; min-width: 100px;">ZJY1-11-SJ0</div>
-                <div style="display: inline-block; width: 10%; min-width: 100px;">999</div>
+                <div style="display: inline-block; width: 30%; min-width: 200px;">{{ part.name }}</div>
+                <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.amount_left }}</div>
+                <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.engine_type }}</div>
+                <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.nr_oem }}</div>
+                <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.price }}</div>
             </div>
         </li>
         {% endfor %}
     </ul>
 </div>
+{% endif %}
+
+
+{% if not parts %}
+<div>
+    {% if msg %}
+    {% if msg == 'Dodano część' %}
+    <div class="alert alert-success" role="alert">
+        {{msg}}
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        {{msg}}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endif %}

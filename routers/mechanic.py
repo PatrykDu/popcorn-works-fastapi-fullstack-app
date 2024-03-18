@@ -1,4 +1,5 @@
 from fastapi.responses import HTMLResponse
+from starlette.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
@@ -54,8 +55,40 @@ async def repairs_page_for_mechanic(request: Request, db: Session = Depends(get_
 
 
 @router.get("/storage", response_class=HTMLResponse)
-async def storage_page(request: Request, db: Session = Depends(get_db)):
+async def storage_page(request: Request, nr_oem: str | None = None,
+                       qr_code: str | None = None, db: Session = Depends(get_db)):
     """Get request for starting mechanic page after beeing logged in"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+    user_decoded = get_current_user(request)
+    user = db.query(models.User).filter(
+        models.User.username == user_decoded['username']).first()
+
+    found_parts = db.query(models.Part).all()
+    parts = []
+
+    if nr_oem is not None:
+        for part in found_parts:
+            if part.nr_oem == nr_oem:
+                parts.append(part)
+    elif qr_code is not None:
+        for part in found_parts:
+            if part.qr_code == qr_code:
+                parts.append(part)
+    else:
+        parts = found_parts
+
+    return templates.TemplateResponse("storage.html", {"request": request, "user": user, "parts": parts})
+
+
+@router.post("/storage", response_class=HTMLResponse)
+async def add_new_part(request: Request, new_part_name: str = Form(...),
+                       new_part_amount: int = Form(...), new_part_engine_type: str = Form(...),
+                       new_part_price: float = Form(...), new_part_nr_oem: str = Form(...),
+                       new_part_qr_code: str = Form(''), db: Session = Depends(get_db)):
+    """Post request for adding new parts to the DB"""
 
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
     if redirection["is_needed"]:
@@ -66,7 +99,24 @@ async def storage_page(request: Request, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
 
-    return templates.TemplateResponse("storage.html", {"request": request, "user": user})
+    part_model = models.Part()
+
+    part_model.name = new_part_name
+    part_model.amount_left = new_part_amount
+    part_model.engine_type = new_part_engine_type
+    part_model.price = new_part_price
+    part_model.nr_oem = new_part_nr_oem
+    part_model.qr_code = new_part_qr_code
+
+    try:
+        db.add(part_model)
+        db.commit()
+        msg = 'Dodano część'
+    except Exception as err:
+        msg = f"błąd podczas dodawania: {err}"
+
+    return templates.TemplateResponse("storage.html", {"request": request, "user": user, "msg": msg})
+    # return RedirectResponse(url="/storage", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/calendar", response_class=HTMLResponse)

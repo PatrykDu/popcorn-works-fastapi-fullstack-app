@@ -32,6 +32,7 @@ class Part(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     amount_left = Column(Integer, default=1)
+    engine_type = Column(String)
     price = Column(Float, default=0.00)
     nr_oem = Column(String)
     qr_code = Column(String)
