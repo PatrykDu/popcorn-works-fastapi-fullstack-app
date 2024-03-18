@@ -1,3 +1,4 @@
+from typing import List
 from fastapi.responses import HTMLResponse
 from starlette.responses import RedirectResponse
 from sqlalchemy.orm import Session
@@ -56,9 +57,11 @@ async def repairs_page_for_mechanic(request: Request, db: Session = Depends(get_
 
 @router.get("/storage", response_class=HTMLResponse)
 async def storage_page(request: Request, nr_oem: str | None = None,
-                       qr_code: str | None = None, db: Session = Depends(get_db)):
+                       qr_code: str | None = None, search_name: str | None = None,
+                       db: Session = Depends(get_db)):
     """Get request for starting mechanic page after beeing logged in"""
 
+    # redirection if not authorized user is trying to reach endpoint
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
     if redirection["is_needed"]:
         return redirection['redirection']
@@ -66,8 +69,17 @@ async def storage_page(request: Request, nr_oem: str | None = None,
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
 
+    # fetch all parts from DB
     found_parts = db.query(models.Part).all()
     parts = []
+
+    # query parameters filtering
+    if search_name == '':
+        search_name = None
+    if nr_oem == '':
+        nr_oem = None
+    if qr_code == '':
+        qr_code = None
 
     if nr_oem is not None:
         for part in found_parts:
@@ -76,6 +88,16 @@ async def storage_page(request: Request, nr_oem: str | None = None,
     elif qr_code is not None:
         for part in found_parts:
             if part.qr_code == qr_code:
+                parts.append(part)
+
+    # filtering name in search
+    elif search_name is not None:
+        phrases = search_name.split(' ')
+        searched_phrases = [phase.casefold() for phase in phrases]
+        for part in found_parts:
+            part_words: List[str] = part.name.split()
+            part_words = [word.casefold() for word in part_words]
+            if any(phrase in searched_phrases for phrase in part_words):
                 parts.append(part)
     else:
         parts = found_parts
