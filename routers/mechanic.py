@@ -118,7 +118,7 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
     # used_parts = db.query(models.Part).filter(
     #     models.Part.repairs == repair_id).first()
     used_parts = db.query(models.Repair).options(
-        joinedload(models.Repair.part)).filter(models.Repair.id == repair_id).first()
+        joinedload(models.Repair.parts)).filter(models.Repair.id == repair_id).all()
     return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request, "user": user,
                                                                    "all_parts": all_parts,
                                                                    "used_parts": used_parts})
