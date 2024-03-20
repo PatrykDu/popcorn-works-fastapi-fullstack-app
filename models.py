@@ -2,12 +2,6 @@ from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Float, Date
 from sqlalchemy.orm import relationship
 from database import Base
 
-repair_part = Table("repair_part", Base.metadata,
-                    Column("part_id", ForeignKey("part.id"), primary_key=True),
-                    Column("repair_id", ForeignKey(
-                        "repair.id"), primary_key=True),
-                    )
-
 
 class User(Base):
     """User table in database. We can store 3 types of user.
@@ -44,7 +38,7 @@ class Part(Base):
     nr_oem = Column(String)
     qr_code = Column(String)
     repairs = relationship(
-        "Repair", secondary="partsinrepair", back_populates="part")
+        "Repair", secondary="partsinrepair", back_populates="parts")
 
 
 class Repair(Base):
@@ -58,7 +52,7 @@ class Repair(Base):
     customer_id = Column(Integer, ForeignKey("user.id"))
     money = Column(Float, default=0.00)
     parts = relationship("Part", secondary="partsinrepair",
-                         back_populates="repair")
+                         back_populates="repairs")
 
 
 class PartsInRepair(Base):
@@ -66,4 +60,3 @@ class PartsInRepair(Base):
 
     part = Column(Integer, ForeignKey("part.id"), primary_key=True)
     repair = Column(Integer, ForeignKey("repair.id"), primary_key=True)
-    quantity = Column(Integer)
