@@ -37,8 +37,8 @@ class Part(Base):
     price = Column(Float, default=0.00)
     nr_oem = Column(String)
     qr_code = Column(String)
-    repairs = relationship(
-        "Repair", secondary="partsinrepair", back_populates="parts")
+    repair = relationship(
+        "Repair", secondary="partsinrepair", back_populates="part")
 
 
 class Repair(Base):
@@ -51,8 +51,8 @@ class Repair(Base):
     active = Column(Boolean, default=False)
     customer_id = Column(Integer, ForeignKey("user.id"))
     money = Column(Float, default=0.00)
-    parts = relationship("Part", secondary="partsinrepair",
-                         back_populates="repairs")
+    part = relationship("Part", secondary="partsinrepair",
+                        back_populates="repair")
 
 
 class PartsInRepair(Base):

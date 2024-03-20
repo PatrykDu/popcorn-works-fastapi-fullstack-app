@@ -1,7 +1,7 @@
 from typing import List
 from fastapi.responses import HTMLResponse
 from starlette.responses import RedirectResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
@@ -116,13 +116,14 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
     # TODO: check how to get this data. Looks like filter or many-to-many relationship is not done correctly
     # https://www.gormanalysis.com/blog/many-to-many-relationships-in-fastapi/
     # used_parts = db.query(models.Part).filter(
-    #     models.Part.repair == repair_id).first()
-
-    # return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request, "user": user,
-    #                                                                "all_parts": all_parts,
-    #                                                                "used_parts": used_parts})
+    #     models.Part.repairs == repair_id).first()
+    used_parts = db.query(models.Repair).options(
+        joinedload(models.Repair.part)).filter(models.Repair.id == repair_id).first()
     return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request, "user": user,
-                                                                   "all_parts": all_parts})
+                                                                   "all_parts": all_parts,
+                                                                   "used_parts": used_parts})
+    # return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request, "user": user,
+    #                                                                "all_parts": all_parts})
 
 
 @router.get("/storage", response_class=HTMLResponse)
