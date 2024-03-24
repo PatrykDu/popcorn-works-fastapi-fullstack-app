@@ -12,7 +12,7 @@ import models
 from database import SessionLocal, engine
 from utils import get_db, SECRET_KEY, ALGORITHM, get_current_user
 from jose import jwt, JWTError
-
+from passlib.context import CryptContext
 
 templates = Jinja2Templates(directory="templates")
 
@@ -23,6 +23,8 @@ router = APIRouter(
     responses={401: {"user": "Not authorized"}}
 )
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def authenticate_user(username: str, password: str, db):
     """Checks if user provided right password."""
@@ -31,10 +33,9 @@ def authenticate_user(username: str, password: str, db):
 
     if not user:
         return False
-    if password != user.hashed_password:
+    if not pwd_context.verify(password, user.hashed_password):
         return False
     return user
-
 
 def create_access_token(username: str, user_id: int,
                         expires_delta: Optional[timedelta] = None):
@@ -148,7 +149,8 @@ async def register_user(request: Request, email: str = Form(...), username: str 
     user_model.first_name = firstname
     user_model.last_name = lastname
 
-    user_model.hashed_password = password
+    # Encrypt the password
+    user_model.hashed_password = pwd_context.hash(password)
 
     db.add(user_model)
     db.commit()
