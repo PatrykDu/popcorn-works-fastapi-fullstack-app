@@ -1,16 +1,39 @@
 {% include 'layout.html' %}
 
 <!-- add a new part -->
+<div>
+    Klient: {{ customer.first_name }} {{ customer.last_name }} Naprawa od {{repair.start_date}} do {{repair.end_date}}
+</div>
+
 <div style="background: #f39f32; margin-bottom: 3em; margin-top: 1em;">
-    <div style="text-align: center;"><strong>Dodaj nową część użytą do naprawy</strong></div>
+    <div style="text-align: center;"><strong>Dodaj nową część użytą do naprawy {{ repair.car_name }}</strong></div>
     <form action="" method="post" style="display: inline-block; margin-left: 15%;">
-        <select name="customer_id" id="customer_id">
+        <select name="part_id" id="part_id">
             <option value="" disabled selected>Wybierz część</option>
             {% for part in all_parts %}
-            <option id="part_name" value="{{ part.id }}">{{ part.name}}
+            <option value="{{ part.id }}">{{ part.name}}
                 {% endfor %}
             </option>
         </select>
+        <textarea id="quantity" name="quantity" rows="1" cols="10" placeholder="Ilość"></textarea>
         <input style="display: inline-block; padding-top: 1.5em;" type="submit" value="Dodaj część">
     </form>
+</div>
+
+{% if used_parts %}
+<div class="scrollable-mechanic-list">
+    <ul>
+        {% for used_part in used_parts %}
+        <li class="car_part_box " style="list-style: none; padding: 1em;">
+            <div class="wrapper" style="background: #ffc078; padding-left: 3em;">
+                <div style="display: inline-block; width: 30%; min-width: 200px;">{{ used_part.name }}</div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div>
+    Całkowity koszt: {{repair.money}}
 </div>
