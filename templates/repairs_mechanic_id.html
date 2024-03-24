@@ -32,8 +32,23 @@
         {% endfor %}
     </ul>
 </div>
-{% endif %}
-
 <div>
     Całkowity koszt: {{repair.money}}
 </div>
+{% endif %}
+
+{% if not used_parts %}
+<div>
+    {% if msg %}
+    {% if msg == 'Dodano nową część do rachunku' %}
+    <div class="alert alert-success" role="alert">
+        {{msg}}
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        {{msg}}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endif %}

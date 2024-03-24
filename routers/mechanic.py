@@ -110,10 +110,8 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
         models.User.username == user_decoded['username']).first()
 
     all_parts = db.query(models.Part).all()
-    # used_parts = db.query(models.Part).options(joinedload(
-    #     models.Part.repairs)).filter(models.PartsInRepair.repair_id == repair_id).all()
-    used_parts = db.query(models.Part).options(joinedload(
-        models.Part.repairs)).where(models.PartsInRepair.repair_id == repair_id).all()
+    used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
+        models.PartsInRepair.repair_id == repair_id).all()
 
     repair = db.query(models.Repair).filter(
         models.Repair.id == repair_id).first()
@@ -154,7 +152,7 @@ async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: i
     except Exception as err:
         msg = f"błąd podczas dodawania: {err}"
 
-    return templates.TemplateResponse("repairs_mechanic.html", {"request": request, "user": user, "msg": msg})
+    return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request, "user": user, "msg": msg})
 
 
 @router.get("/storage", response_class=HTMLResponse)
