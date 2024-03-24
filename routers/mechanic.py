@@ -105,28 +105,69 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
     if redirection["is_needed"]:
         return redirection['redirection']
-
     user_decoded = get_current_user(request)
+    user = db.query(models.User).filter(
+        models.User.username == user_decoded['username']).first()
 
+    all_parts = db.query(models.Part).all()
+    used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
+        models.PartsInRepair.repair_id == repair_id).all()
+
+    repair = db.query(models.Repair).filter(
+        models.Repair.id == repair_id).first()
+    customer = db.query(models.User).filter(
+        models.User.id == repair.customer_id).first()
+
+    return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request,
+                                                                   "user": user,
+                                                                   "all_parts": all_parts,
+                                                                   "used_parts": used_parts,
+                                                                   "customer": customer,
+                                                                   "repair": repair})
+
+
+@router.post("/repairs/{repair_id}", response_class=HTMLResponse)
+async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: int = Form(...), quantity: int = Form(...),
+                                    db: Session = Depends(get_db)):
+    """Post request for adding to the DB new part used in repair_id"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+    user_decoded = get_current_user(request)
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
 
     all_parts = db.query(models.Part).all()
 
-    # TODO: check how to get this data. Looks like filter or many-to-many relationship is not done correctly
-    # https://www.gormanalysis.com/blog/many-to-many-relationships-in-fastapi/
-    # used_parts = db.query(models.Part).filter(
-    #     models.Part.repairs == repair_id).first()
-    # used_parts = db.query(models.Repair).options(
-    #     joinedload(models.Repair.parts)).filter(models.Repair.id == repair_id).all()
-    used_parts = db.query(models.Part).options(joinedload(
-        models.Part.repairs)).filter(models.PartsInRepair.repair_id == repair_id).all()
+    repair = db.query(models.Repair).filter(
+        models.Repair.id == repair_id).first()
+    customer = db.query(models.User).filter(
+        models.User.id == repair.customer_id).first()
 
-    return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request, "user": user,
+    parts_in_repair_model = models.PartsInRepair()
+    parts_in_repair_model.part_id = part_id
+    parts_in_repair_model.repair_id = repair_id
+    parts_in_repair_model.quantity = quantity
+
+    try:
+        db.add(parts_in_repair_model)
+        db.commit()
+        used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
+            models.PartsInRepair.repair_id == repair_id).all()
+        msg = 'Dodano nową część do rachunku'
+    except Exception as err:
+        used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
+            models.PartsInRepair.repair_id == repair_id).all()
+        msg = f"błąd podczas dodawania: {err}"
+
+    return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request,
+                                                                   "user": user,
                                                                    "all_parts": all_parts,
-                                                                   "used_parts": used_parts})
-    # return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request, "user": user,
-    #                                                                "all_parts": all_parts})
+                                                                   "used_parts": used_parts,
+                                                                   "customer": customer,
+                                                                   "repair": repair,
+                                                                   "msg": msg})
 
 
 @router.get("/storage", response_class=HTMLResponse)
