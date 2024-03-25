@@ -1,31 +1,32 @@
 {% include 'layout.html' %}
 
-
-<div class="corner-element top-mechanic">
-    <a href="/customer/repairs">
-        <div class="corner-title">See repairs history and request new repair</div>
+<div class="corner-element top-mechanic" style="height: auto; margin-top: 1rem;">
+    <a href="/customer/calendar">
+        <div class="corner-title">Schedule an appointment</div>
     </a>
-    <div class="scrollable-mechanic-list">
-        <ul>
-            {% for repair in customer_repairs %}
-            <a href="/customer/repairs/{{repair.id}}">
-                <li style="list-style: none;">
-                    <div class="message-box">
-                        <div class="email_box" style="background: #ffc078; height: auto;">
-                            <strong>{{ repair.car_name}}</strong>
-                        </div>
-                        <div>Repair date from: {{repair.start_date}} to: {{repair.end_date}}</div>
-                    </div>
-                </li>
-            </a>
-            {% endfor %}
-        </ul>
-    </div>
 </div>
 
-<div class="corner-element bottom-mechanic">
-    <a href="/customer/calendar">
-        <div class="corner-title">Calendar</div>
-    </a>
-    <div>Wielkie XD jak to zrobić xD</div>
+<div>
+    <div class="corner-element top-mechanic" style="margin-top: 5em; height: 47em;">
+        <a href="/customer/repairs">
+            <div class="corner-title">See all repair history</div>
+        </a>
+        <div class="scrollable-mechanic-list">
+            <ul>
+                {% for repair in customer_repairs %}
+                <a href="/customer/repairs/{{repair.id}}">
+                    <li style="list-style: none;">
+                        <div class="message-box">
+                            <div class="email_box" style="background: #ffc078; height: auto;">
+                                <strong>{{ repair.car_name}}</strong>
+                            </div>
+                            <div>Repair date from: {{repair.start_date}} to: {{repair.end_date}}</div>
+                        </div>
+                    </li>
+                </a>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
 </div>

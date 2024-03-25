@@ -11204,7 +11204,7 @@ a.text-dark:focus {
 .corner-element {
   position: absolute;
   width: 40%;
-  height: 25%;
+  height: 70%;
   background-color: #f39f32;
   border: 2px solid #000;
   box-sizing: border-box;
@@ -11214,13 +11214,13 @@ a.text-dark:focus {
   top: 0;
   left: 0;
   margin-left: 5%;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .top-right-mechanic {
   top: 0;
   right: 0;
-  margin-top: 100px;
+  margin-top: 50px;
   margin-right: 5%;
 }
 
@@ -11228,7 +11228,7 @@ a.text-dark:focus {
   bottom: 0;
   left: 0;
   margin-left: 5%;
-  margin-bottom: 250px;
+  margin-bottom: 150px;
   width: 90%;
   height: 35%;
 }
@@ -11251,7 +11251,7 @@ a.text-dark:focus {
 
 .scrollable-mechanic-list {
   overflow: auto;
-  max-height: 80%;
+  max-height: 90%;
   padding: 10px;
 }
 
@@ -11261,7 +11261,7 @@ a.text-dark:focus {
   padding: 1em;
   margin-bottom: 1%;
   width: 100%;
-  height: 5%p;
+  height: 5%;
 }
 
 .email_box {

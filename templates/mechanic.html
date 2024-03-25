@@ -4,15 +4,27 @@
 
     <div class="corner-element top-left-mechanic">
         <a href="/mechanic/repairs">
-            <div class="corner-title">Naprawy</div>
+            <div class="corner-title">Zobacz wszystkie naprawy</div>
         </a>
+
         <div class="scrollable-mechanic-list">
             <ul>
                 {% for repair in repairs %}
-                <li>{{repair.car_name}}</li>
+                <a href="/mechanic/repairs/{{repair.id}}">
+                    <li style="list-style: none;">
+                        <div class="message-box">
+                            <div class="email_box" style="background: #ffc078; height: auto;">
+                                <strong>{{ repair.car_name}}</strong>
+                            </div>
+                            <div>Repair date from: {{repair.start_date}} to: {{repair.end_date}}</div>
+                        </div>
+                    </li>
+                </a>
                 {% endfor %}
             </ul>
         </div>
+
+
     </div>
 
     <div class="corner-element top-right-mechanic">
@@ -26,7 +38,7 @@
                             <strong>{{ message.email}}</strong>
                             <a href="/contact/delete/{{message.id}}"><img
                                     src="{{ url_for('static', path='/popcorn/photos/trash.png') }}" alt="Logo"
-                                    style="width: 3em;;"></a>
+                                    style="width: 4.5em;;"></a>
                         </div>
                         <div>{{ message.message}}</div>
                     </div>
@@ -36,11 +48,10 @@
         </div>
     </div>
 
-    <div class="corner-element bottom-mechanic">
+    <div class="corner-element bottom-mechanic" style="height: auto;">
         <a href="/mechanic/calendar">
             <div class="corner-title">Kalendarz</div>
         </a>
-        <div>Wielkie XD jak to zrobić xD</div>
     </div>
 
 </div>
