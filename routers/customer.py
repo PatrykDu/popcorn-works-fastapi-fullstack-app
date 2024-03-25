@@ -84,7 +84,7 @@ def convert_repairs(repairs: List[models.Repair]):
     repair_dates = []
     for repair in repairs:
         if repair.active:
-            color = "red"
+            color = "green"
             text = "white"
         else:
             color = "grey"
@@ -101,6 +101,19 @@ def convert_repairs(repairs: List[models.Repair]):
     return repair_dates
 
 
+def get_busy_dates(repairs: List[models.Repair]):
+    busy_dates = []
+    for repair in repairs:
+        if repair.active:
+            busy_dates.append({
+                "title": "-",
+                "start": f"{repair.start_date}",
+                "end": f"{repair.end_date}",
+                "color": "red"
+            })
+    return busy_dates
+
+
 @router.get("/calendar", response_class=HTMLResponse)
 async def customer_home_page(request: Request, db: Session = Depends(get_db)):
     """Get request for customer/repairs page after beeing logged in"""
@@ -109,14 +122,52 @@ async def customer_home_page(request: Request, db: Session = Depends(get_db)):
     redirection = check_user_role_and_redirect(request, db, 'customer')
     if redirection["is_needed"]:
         return redirection['redirection']
-
     user = get_current_user(request)
 
     model_customer_repairs = db.query(models.Repair).filter(
         models.Repair.customer_id == user['id']).all()
-
     customer_repairs = convert_repairs(model_customer_repairs)
+
+    model_all_repairs = db.query(models.Repair).filter(
+        models.Repair.customer_id != user['id']).all()
+    all_repairs = get_busy_dates(model_all_repairs)
+
+    all_repairs.extend(customer_repairs)
 
     return templates.TemplateResponse("calendar_customer.html", {"request": request,
                                                                  "user": user,
-                                                                 "customer_repairs": customer_repairs})
+                                                                 "customer_repairs": all_repairs})
+
+
+@router.post("/calendar", response_class=HTMLResponse)
+async def add_new_repair(request: Request, car_name: str = Form(...),
+                         start_of_repair: str = Form(...), end_of_repair: str = Form(...),
+                         db: Session = Depends(get_db)):
+    """Post request for adding new not active repair to the DB"""
+
+    redirection = check_user_role_and_redirect(request, db, 'customer')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    user_decoded = get_current_user(request)
+
+    user = db.query(models.User).filter(
+        models.User.username == user_decoded['username']).first()
+
+    repair_model = models.Repair()
+
+    repair_model.car_name = car_name
+    repair_model.start_date = start_of_repair
+    repair_model.end_date = end_of_repair
+    repair_model.active = False
+    repair_model.customer_id = user.id
+
+    try:
+        db.add(repair_model)
+        db.commit()
+        msg = 'New proposition sent'
+    except Exception as err:
+        msg = f"Error: {err}"
+
+    return templates.TemplateResponse("success.html", {"request": request,
+                                                       "msg": msg})

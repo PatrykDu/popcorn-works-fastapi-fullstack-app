@@ -259,15 +259,18 @@ def convert_repairs(repairs: List[models.Repair]):
     repair_dates = []
     for repair in repairs:
         if repair.active:
-            color = "green"
-        else:
             color = "red"
+            text = "white"
+        else:
+            color = "grey"
+            text = "black"
         repair_dates.append(
             {
                 "title": f"{repair.car_name}",
                 "start": f"{repair.start_date}",
                 "end": f"{repair.end_date}",
-                "color": color
+                "color": color,
+                "textColor": text
             }
         )
     return repair_dates
