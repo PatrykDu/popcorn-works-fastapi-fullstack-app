@@ -255,6 +255,24 @@ async def add_new_part(request: Request, new_part_name: str = Form(...),
     return templates.TemplateResponse("storage.html", {"request": request, "user": user, "msg": msg})
 
 
+def convert_repairs(repairs: List[models.Repair]):
+    repair_dates = []
+    for repair in repairs:
+        if repair.active:
+            color = "green"
+        else:
+            color = "red"
+        repair_dates.append(
+            {
+                "title": f"{repair.car_name}",
+                "start": f"{repair.start_date}",
+                "end": f"{repair.end_date}",
+                "color": color
+            }
+        )
+    return repair_dates
+
+
 @router.get("/calendar", response_class=HTMLResponse)
 async def calendar_page_for_mechanic(request: Request, db: Session = Depends(get_db)):
     """Get request for starting mechanic page after beeing logged in"""

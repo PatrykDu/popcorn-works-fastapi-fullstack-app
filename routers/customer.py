@@ -7,6 +7,7 @@ from fastapi import Depends, HTTPException, status, APIRouter, Request, Response
 import models
 from database import SessionLocal, engine
 from utils import get_db, get_current_user, check_user_role_and_redirect
+from typing import List
 
 templates = Jinja2Templates(directory="templates")
 
@@ -79,6 +80,24 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
                                                                    "repair": repair})
 
 
+def convert_repairs(repairs: List[models.Repair]):
+    repair_dates = []
+    for repair in repairs:
+        if repair.active:
+            color = "green"
+        else:
+            color = "red"
+        repair_dates.append(
+            {
+                "title": f"{repair.car_name}",
+                "start": f"{repair.start_date}",
+                "end": f"{repair.end_date}",
+                "color": color
+            }
+        )
+    return repair_dates
+
+
 @router.get("/calendar", response_class=HTMLResponse)
 async def customer_home_page(request: Request, db: Session = Depends(get_db)):
     """Get request for customer/repairs page after beeing logged in"""
@@ -90,8 +109,10 @@ async def customer_home_page(request: Request, db: Session = Depends(get_db)):
 
     user = get_current_user(request)
 
-    customer_repairs = db.query(models.Repair).filter(
+    model_customer_repairs = db.query(models.Repair).filter(
         models.Repair.customer_id == user['id']).all()
+
+    customer_repairs = convert_repairs(model_customer_repairs)
 
     return templates.TemplateResponse("calendar_customer.html", {"request": request,
                                                                  "user": user,
