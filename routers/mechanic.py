@@ -111,7 +111,7 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
 
     all_parts = db.query(models.Part).all()
     used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
-        models.PartsInRepair.repair_id == repair_id).all()
+        models.Parts.repair.repair_id == repair_id).all()
 
     repair = db.query(models.Repair).filter(
         models.Repair.id == repair_id).first()
