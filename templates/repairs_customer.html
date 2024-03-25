@@ -1,0 +1,46 @@
+{% include 'layout.html' %}
+
+
+<div class="corner-title">Repairs History</div>
+
+<div class="wrapper" style="background: gainsboro; padding-left: 7em;">
+    <div style="display: inline-block; width: 29.5%; min-width: 200px;">Name of the car</div>
+    <div style="display: inline-block; width: 10%; min-width: 100px;">Start Date</div>
+    <div style="display: inline-block; width: 10%; min-width: 100px;">End Date</div>
+    <div style="display: inline-block; width: 10%; min-width: 100px;">Price</div>
+</div>
+
+{% if customer_repairs %}
+<div class="scrollable-mechanic-list">
+    <ul>
+        {% for repair in customer_repairs %}
+        <li class="car_part_box " style="list-style: none; padding: 1em;">
+            <a href="/customer/repairs/{{ repair.id }}">
+                <div class="wrapper" style="background: #ffc078; padding-left: 3em;">
+                    <div style="display: inline-block; width: 30%; min-width: 200px;">{{ repair.car_name }}</div>
+                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.start_date }}</div>
+                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.end_date }}</div>
+                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.money }}</div>
+                </div>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if not repairs %}
+<div>
+    {% if msg %}
+    {% if msg == 'Dodano nowy termin' %}
+    <div class="alert alert-success" role="alert">
+        {{msg}}
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        {{msg}}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endif %}

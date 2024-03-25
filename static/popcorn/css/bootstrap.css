@@ -11233,6 +11233,15 @@ a.text-dark:focus {
   height: 35%;
 }
 
+.top-mechanic {
+  top: 0;
+  left: 0;
+  margin-left: 5%;
+  margin-bottom: 250px;
+  width: 90%;
+  height: 35%;
+}
+
 .corner-title {
   text-align: center;
   font-weight: bold;
