@@ -7,9 +7,9 @@
 
 {% if used_parts %}
 <div class="wrapper" style="background: gainsboro; padding-left: 7em;">
-    <div style="display: inline-block; width: 29.5%; min-width: 200px;">Nazwa części</div>
-    <div style="display: inline-block; width: 30%; min-width: 200px;">Ilość</div>
-    <div style="display: inline-block; width: 20%; min-width: 200px;">Kwota</div>
+    <div style="display: inline-block; width: 29.5%; min-width: 200px;">Part name</div>
+    <div style="display: inline-block; width: 30%; min-width: 200px;">Quantity</div>
+    <div style="display: inline-block; width: 20%; min-width: 200px;">Price</div>
 </div>
 <div class="scrollable-mechanic-list">
     <ul>
@@ -25,6 +25,6 @@
     </ul>
 </div>
 <div>
-    Całkowity koszt: {{repair.money}}
+    Total Price: {{repair.money}}
 </div>
 {% endif %}
