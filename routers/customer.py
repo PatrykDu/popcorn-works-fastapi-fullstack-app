@@ -77,3 +77,22 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
                                                                    "user": user,
                                                                    "used_parts": used_parts,
                                                                    "repair": repair})
+
+
+@router.get("/calendar", response_class=HTMLResponse)
+async def customer_home_page(request: Request, db: Session = Depends(get_db)):
+    """Get request for customer/repairs page after beeing logged in"""
+
+    # checks if customer is logged in (if different role then redirection)
+    redirection = check_user_role_and_redirect(request, db, 'customer')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    user = get_current_user(request)
+
+    customer_repairs = db.query(models.Repair).filter(
+        models.Repair.customer_id == user['id']).all()
+
+    return templates.TemplateResponse("calendar_customer.html", {"request": request,
+                                                                 "user": user,
+                                                                 "customer_repairs": customer_repairs})
