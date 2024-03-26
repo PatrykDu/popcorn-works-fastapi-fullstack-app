@@ -9,8 +9,10 @@ from database import SessionLocal, engine
 from routers import auth, customer, mechanic, admin, contact
 from utils import get_db, get_current_user, check_user_role_and_redirect
 from fastapi.exceptions import HTTPException
+from fastapi.responses import FileResponse
 
 app = FastAPI()
+favicon_path = 'favicon.ico'
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -24,6 +26,11 @@ app.include_router(customer.router)
 app.include_router(mechanic.router)
 app.include_router(admin.router)
 app.include_router(contact.router)
+
+
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse(favicon_path)
 
 
 @app.get("/", response_class=HTMLResponse)
