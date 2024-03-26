@@ -95,7 +95,8 @@ def convert_repairs(repairs: List[models.Repair]):
                 "start": f"{repair.start_date}",
                 "end": f"{repair.end_date}",
                 "color": color,
-                "textColor": text
+                "textColor": text,
+                "url": f"repairs/{repair.id}",
             }
         )
     return repair_dates
@@ -109,13 +110,14 @@ def get_busy_dates(repairs: List[models.Repair]):
                 "title": "-",
                 "start": f"{repair.start_date}",
                 "end": f"{repair.end_date}",
-                "color": "red"
+                "color": "red",
+                "url": "",
             })
     return busy_dates
 
 
 @router.get("/calendar", response_class=HTMLResponse)
-async def customer_home_page(request: Request, db: Session = Depends(get_db)):
+async def get_customer_calendar(request: Request, db: Session = Depends(get_db)):
     """Get request for customer/repairs page after beeing logged in"""
 
     # checks if customer is logged in (if different role then redirection)

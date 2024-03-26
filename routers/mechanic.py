@@ -270,15 +270,40 @@ def convert_repairs(repairs: List[models.Repair]):
                 "start": f"{repair.start_date}",
                 "end": f"{repair.end_date}",
                 "color": color,
-                "textColor": text
+                "textColor": text,
+                "id": f"{repair.id}",
             }
         )
     return repair_dates
 
 
 @router.get("/calendar", response_class=HTMLResponse)
-async def calendar_page_for_mechanic(request: Request, db: Session = Depends(get_db)):
-    """Get request for starting mechanic page after beeing logged in"""
+async def mechanic_calendar(request: Request, db: Session = Depends(get_db)):
+    """Get request for customer/repairs page after beeing logged in"""
+
+    # checks if customer is logged in (if different role then redirection)
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+    user = get_current_user(request)
+
+    model_repairs = db.query(models.Repair).all()
+    all_repairs = convert_repairs(model_repairs)
+
+    found_customers = db.query(models.User).filter(
+        models.User.role == 'customer')
+
+    return templates.TemplateResponse("calendar_mechanic.html", {"request": request,
+                                                                 "user": user,
+                                                                 "customers": found_customers,
+                                                                 "customer_repairs": all_repairs})
+
+
+@router.post("/calendar", response_class=HTMLResponse)
+async def add_new_repair(request: Request, car_name: str = Form(...), customer_id: int = Form(...),
+                         start_of_repair: str = Form(...), end_of_repair: str = Form(...),
+                         db: Session = Depends(get_db)):
+    """Post request for adding new repair to the DB"""
 
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
     if redirection["is_needed"]:
@@ -289,4 +314,19 @@ async def calendar_page_for_mechanic(request: Request, db: Session = Depends(get
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
 
-    return templates.TemplateResponse("mechanic_calendar.html", {"request": request, "user": user})
+    repair_model = models.Repair()
+
+    repair_model.car_name = car_name
+    repair_model.start_date = start_of_repair
+    repair_model.end_date = end_of_repair
+    repair_model.active = True
+    repair_model.customer_id = customer_id
+
+    try:
+        db.add(repair_model)
+        db.commit()
+        msg = 'Dodano nową naprawę'
+    except Exception as err:
+        msg = f"błąd podczas dodawania: {err}"
+
+    return templates.TemplateResponse("success.html", {"request": request, "user": user, "msg": msg})
