@@ -8,6 +8,7 @@ import models
 from database import SessionLocal, engine
 from routers import auth, customer, mechanic, admin, contact
 from utils import get_db, get_current_user, check_user_role_and_redirect
+from fastapi.exceptions import HTTPException
 
 app = FastAPI()
 
@@ -44,3 +45,8 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
             return RedirectResponse(url="/admin", status_code=status.HTTP_302_FOUND)
 
     return templates.TemplateResponse("home.html", {"request": request, "user": user})
+
+
+@app.exception_handler(404)
+async def not_found_exception_handler(request: Request, exc: HTTPException):
+    return RedirectResponse('/')

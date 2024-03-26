@@ -61,23 +61,31 @@ async def customer_home_page(request: Request, db: Session = Depends(get_db)):
 @router.get("/repairs/{repair_id}", response_class=HTMLResponse)
 async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Session = Depends(get_db)):
     """Get request for repair_id page"""
-
     redirection = check_user_role_and_redirect(request, db, 'customer')
     if redirection["is_needed"]:
         return redirection['redirection']
     user_decoded = get_current_user(request)
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
-    used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
-        models.PartsInRepair.repair_id == repair_id).all()
 
-    repair = db.query(models.Repair).filter(
-        models.Repair.id == repair_id).first()
+    # redirection if user is trying to reach not his repair
+    all_customers_repair = db.query(models.Repair).filter(
+        models.Repair.customer_id == user.id).all()
+    all_customers_repair_ids = [repair.id for repair in all_customers_repair]
+    if repair_id not in all_customers_repair_ids:
+        return RedirectResponse(url="/customer", status_code=status.HTTP_302_FOUND)
 
-    return templates.TemplateResponse("repairs_customer_id.html", {"request": request,
-                                                                   "user": user,
-                                                                   "used_parts": used_parts,
-                                                                   "repair": repair})
+    else:
+        used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
+            models.PartsInRepair.repair_id == repair_id).all()
+
+        repair = db.query(models.Repair).filter(
+            models.Repair.id == repair_id).first()
+
+        return templates.TemplateResponse("repairs_customer_id.html", {"request": request,
+                                                                       "user": user,
+                                                                       "used_parts": used_parts,
+                                                                       "repair": repair})
 
 
 def convert_repairs(repairs: List[models.Repair]):
