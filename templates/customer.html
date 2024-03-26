@@ -14,16 +14,31 @@
         <div class="scrollable-mechanic-list">
             <ul>
                 {% for repair in customer_repairs %}
+                {% if repair.active == True %}
                 <a href="/customer/repairs/{{repair.id}}">
                     <li style="list-style: none;">
                         <div class="message-box">
-                            <div class="email_box" style="background: #ffc078; height: auto;">
+                            <div class="email_box" style="background: #5ca355; height: auto;">
                                 <strong>{{ repair.car_name}}</strong>
                             </div>
                             <div>Repair date from: {{repair.start_date}} to: {{repair.end_date}}</div>
                         </div>
                     </li>
                 </a>
+                {% else %}
+                <a href="/customer/repairs/{{repair.id}}">
+                    <li style="list-style: none;">
+                        <div class="message-box">
+                            <div class="email_box" style="background: #696969; height: auto;">
+                                <strong>{{ repair.car_name}}</strong>
+                            </div>
+                            <div><b>NOT YET CONFIRMED BY THE MECHANIC!</b> Repair suggestion date from:
+                                {{repair.start_date}} to:
+                                {{repair.end_date}}</div>
+                        </div>
+                    </li>
+                </a>
+                {% endif %}
                 {% endfor %}
             </ul>
         </div>

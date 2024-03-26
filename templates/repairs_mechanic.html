@@ -33,9 +33,10 @@
 <div class="scrollable-mechanic-list">
     <ul>
         {% for repair in repairs %}
+        {% if repair.active == True %}
         <li class="car_part_box " style="list-style: none; padding: 1em;">
             <a href="/mechanic/repairs/{{ repair.id }}">
-                <div class="wrapper" style="background: #ffc078; padding-left: 3em;">
+                <div class="wrapper" style="background: #5ca355; padding-left: 3em;">
                     <div style="display: inline-block; width: 30%; min-width: 200px;">{{ repair.car_name }}</div>
                     <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.start_date }}</div>
                     <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.end_date }}</div>
@@ -43,6 +44,18 @@
                 </div>
             </a>
         </li>
+        {% else %}
+        <li class="car_part_box " style="list-style: none; padding: 1em;">
+            <a href="/mechanic/repairs/{{ repair.id }}">
+                <div class="wrapper" style="background: #696969; padding-left: 3em;">
+                    <div style="display: inline-block; width: 30%; min-width: 200px;">{{ repair.car_name }}</div>
+                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.start_date }}</div>
+                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.end_date }}</div>
+                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.money }}</div>
+                </div>
+            </a>
+        </li>
+        {% endif %}
         {% endfor %}
     </ul>
 </div>
