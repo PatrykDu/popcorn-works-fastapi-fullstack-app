@@ -162,6 +162,28 @@ async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: i
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
 
+@router.get("/repairs/delete/{repair_id}", response_class=HTMLResponse)
+async def remove_repair(request: Request, repair_id: int,
+                        db: Session = Depends(get_db)):
+    """Post request for removing repair from the DB"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    repair_model = db.query(models.Repair).filter(
+        models.Repair.id == repair_id).first()
+
+    try:
+        db.delete(repair_model)
+        db.commit()
+        msg = 'usunięto'
+    except Exception as err:
+        msg = f"błąd: {err}"
+
+    return RedirectResponse(url="/mechanic/repairs", status_code=status.HTTP_302_FOUND)
+
+
 @router.post("/repairs/{repair_id}/change_date", response_class=HTMLResponse)
 async def change_date_of_repair(request: Request, repair_id: int, start_of_repair: str = Form(...),
                                 end_of_repair: str = Form(...), db: Session = Depends(get_db)):
@@ -323,11 +345,6 @@ async def add_new_part(request: Request, new_part_name: str = Form(...),
     if redirection["is_needed"]:
         return redirection['redirection']
 
-    user_decoded = get_current_user(request)
-
-    user = db.query(models.User).filter(
-        models.User.username == user_decoded['username']).first()
-
     part_model = models.Part()
 
     part_model.name = new_part_name
@@ -344,7 +361,7 @@ async def add_new_part(request: Request, new_part_name: str = Form(...),
     except Exception as err:
         msg = f"błąd podczas dodawania: {err}"
 
-    return templates.TemplateResponse("storage.html", {"request": request, "user": user, "msg": msg})
+    return RedirectResponse(url="/mechanic/storage", status_code=status.HTTP_302_FOUND)
 
 
 @router.post("/storage/{part_id}", response_class=HTMLResponse)
@@ -373,6 +390,28 @@ async def change_part(request: Request, part_id: int, change_part_name: str = Fo
         msg = 'Dodano część'
     except Exception as err:
         msg = f"błąd podczas dodawania: {err}"
+
+    return RedirectResponse(url="/mechanic/storage", status_code=status.HTTP_302_FOUND)
+
+
+@router.post("/storage/delete/{part_id}", response_class=HTMLResponse)
+async def change_part(request: Request, part_id: int,
+                      db: Session = Depends(get_db)):
+    """Post request removing part from the DB"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    part_model = db.query(models.Part).filter(
+        models.Part.id == part_id).first()
+
+    try:
+        db.delete(part_model)
+        db.commit()
+        msg = 'Dodano część'
+    except Exception as err:
+        msg = f"błąd: {err}"
 
     return RedirectResponse(url="/mechanic/storage", status_code=status.HTTP_302_FOUND)
 

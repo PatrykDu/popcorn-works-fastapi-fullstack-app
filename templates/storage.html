@@ -71,6 +71,8 @@
                             style="display: inline-block; width: 10%; min-width: 100px;" name="change_part_price"
                             value={{part.price}}>
                         <input style="display: inline-block;" type="submit" value="Zmień">
+                        <input style="display: inline-block;" type="submit" formaction="storage/delete/{{part.id}}"
+                            name="delete" value="Usuń część">
                     </form>
                 </div>
             </li>

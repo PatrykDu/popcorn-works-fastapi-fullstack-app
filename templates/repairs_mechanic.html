@@ -41,18 +41,26 @@
                     <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.start_date }}</div>
                     <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.end_date }}</div>
                     <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.money }}</div>
+                    <a href="/mechanic/repairs/delete/{{repair.id}}"><img
+                            src="{{ url_for('static', path='/popcorn/photos/trash.png') }}" alt="Logo"
+                            style="width: 4.5em; margin-left: 10%;"></a>
                 </div>
             </a>
         </li>
         {% else %}
         <li class="car_part_box " style="list-style: none; padding: 1em;">
             <a href="/mechanic/repairs/{{ repair.id }}">
-                <div class="wrapper" style="background: #696969; padding-left: 3em;">
-                    <div style="display: inline-block; width: 30%; min-width: 200px;">{{ repair.car_name }}</div>
-                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.start_date }}</div>
-                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.end_date }}</div>
-                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.money }}</div>
-                </div>
+                <form action="" method="post">
+                    <div class="wrapper" style="background: #696969; padding-left: 3em;">
+                        <div style="display: inline-block; width: 30%; min-width: 200px;">{{ repair.car_name }}</div>
+                        <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.start_date }}</div>
+                        <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.end_date }}</div>
+                        <div style="display: inline-block; width: 10%; min-width: 100px;">{{ repair.money }}</div>
+                        <a href="/mechanic/repairs/delete/{{repair.id}}"><img
+                                src="{{ url_for('static', path='/popcorn/photos/trash.png') }}" alt="Logo"
+                                style="width: 4.5em; margin-left: 10%;"></a>
+                    </div>
+                </form>
             </a>
         </li>
         {% endif %}
