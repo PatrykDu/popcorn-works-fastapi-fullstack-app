@@ -112,6 +112,11 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
     all_parts = db.query(models.Part).all()
     used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
         models.PartsInRepair.repair_id == repair_id).all()
+    for part in used_parts:
+        for repair in part.repairs:
+            if repair.repair_id != repair_id:
+                repair_index = part.repairs.index(repair)
+                part.repairs.pop(repair_index)
 
     repair = db.query(models.Repair).filter(
         models.Repair.id == repair_id).first()
@@ -144,6 +149,8 @@ async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: i
         models.Repair.id == repair_id).first()
     customer = db.query(models.User).filter(
         models.User.id == repair.customer_id).first()
+    if repair_id.part.amount > storage.part.amount:
+        raise Exception
 
     parts_in_repair_model = models.PartsInRepair()
     parts_in_repair_model.part_id = part_id
