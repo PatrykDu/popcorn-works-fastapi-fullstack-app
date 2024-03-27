@@ -5,9 +5,9 @@ from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 from fastapi import FastAPI, Depends, Request, status
 import models
-from database import SessionLocal, engine
+from database import engine
 from routers import auth, customer, mechanic, admin, contact
-from utils import get_db, get_current_user, check_user_role_and_redirect
+from utils import get_db, get_current_user
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
 

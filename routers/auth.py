@@ -1,17 +1,14 @@
-from typing import Optional
 from starlette.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
 from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
 from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordRequestForm
 import models
-from database import SessionLocal, engine
+from database import engine
 from utils import get_db, SECRET_KEY, ALGORITHM, get_current_user
-from jose import jwt, JWTError
+from jose import jwt
 from passlib.context import CryptContext
 
 templates = Jinja2Templates(directory="templates")

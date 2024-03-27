@@ -1,10 +1,9 @@
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
-from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
+from fastapi import Depends, APIRouter, Request
 import models
-from database import SessionLocal, engine
+from database import engine
 from utils import get_db, check_user_role_and_redirect, get_current_user
 
 templates = Jinja2Templates(directory="templates")

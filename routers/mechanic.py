@@ -1,12 +1,11 @@
 from typing import List
 from fastapi.responses import HTMLResponse
 from starlette.responses import RedirectResponse
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
-from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
+from fastapi import Depends, status, APIRouter, Request, Form
 import models
-from database import SessionLocal, engine
+from database import engine
 from utils import get_db, check_user_role_and_redirect, get_current_user
 
 templates = Jinja2Templates(directory="templates")

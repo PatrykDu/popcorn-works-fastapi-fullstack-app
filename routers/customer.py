@@ -1,11 +1,10 @@
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
-from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
+from fastapi import Depends, status, APIRouter, Request, Form
 import models
-from database import SessionLocal, engine
+from database import engine
 from utils import get_db, get_current_user, check_user_role_and_redirect
 from typing import List
 

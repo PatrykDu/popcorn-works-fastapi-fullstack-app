@@ -1,6 +1,5 @@
 import os
-from sqlalchemy.orm import Session
-from fastapi import HTTPException, Request, Depends, status
+from fastapi import HTTPException, Request, status
 from starlette.responses import RedirectResponse
 from jose import jwt, JWTError
 from database import SessionLocal, engine
