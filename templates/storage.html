@@ -52,15 +52,26 @@
 
     {% if parts %}
     <div class="scrollable-mechanic-list" style="padding-bottom: 4%;">
-        <ul>
+        <ul style="margin-bottom: 3rem;">
             {% for part in parts %}
             <li class="car_part_box " style="list-style: none; padding: 1em;">
-                <div class="wrapper" style="background: #ffc078; padding-left: 3em;">
-                    <div style="display: inline-block; width: 30%; min-width: 200px;">{{ part.name }}</div>
-                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.amount_left }}</div>
-                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.engine_type }}</div>
-                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.nr_oem }}</div>
-                    <div style="display: inline-block; width: 10%; min-width: 100px;">{{ part.price }}</div>
+                <div class="wrapper"
+                    style="background: #ffc078; padding-left: 3em; padding-top: 0.3em; padding-bottom: 0.3em;">
+                    <form action="storage/{{part.id}}" method="post">
+                        <input id="change_part_name" style="display: inline-block; width: 30%; min-width: 200px;"
+                            name="change_part_name" value="{{part.name}}">
+                        <input type="number" id="change_part_left"
+                            style="display: inline-block; width: 10%; min-width: 100px;" name="change_part_left"
+                            value={{part.amount_left}}>
+                        <input id="change_part_engine" style="display: inline-block; width: 10%; min-width: 100px;"
+                            name="change_part_engine" value="{{part.engine_type}}">
+                        <input id="change_part_oem" style="display: inline-block; width: 10%; min-width: 100px;"
+                            name="change_part_oem" value="{{part.nr_oem}}">
+                        <input type="number" id="change_part_price"
+                            style="display: inline-block; width: 10%; min-width: 100px;" name="change_part_price"
+                            value={{part.price}}>
+                        <input style="display: inline-block;" type="submit" value="Zmień">
+                    </form>
                 </div>
             </li>
             {% endfor %}

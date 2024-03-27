@@ -307,6 +307,36 @@ async def add_new_part(request: Request, new_part_name: str = Form(...),
     return templates.TemplateResponse("storage.html", {"request": request, "user": user, "msg": msg})
 
 
+@router.post("/storage/{part_id}", response_class=HTMLResponse)
+async def change_part(request: Request, part_id: int, change_part_name: str = Form(...),
+                      change_part_left: int = Form(...), change_part_engine: str = Form(...),
+                      change_part_price: float = Form(...), change_part_oem: str = Form(...),
+                      db: Session = Depends(get_db)):
+    """Post request for changing part in the DB"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    part_model = db.query(models.Part).filter(
+        models.Part.id == part_id).first()
+
+    part_model.name = change_part_name
+    part_model.amount_left = change_part_left
+    part_model.engine_type = change_part_engine
+    part_model.price = change_part_price
+    part_model.nr_oem = change_part_oem
+
+    try:
+        db.add(part_model)
+        db.commit()
+        msg = 'Dodano część'
+    except Exception as err:
+        msg = f"błąd podczas dodawania: {err}"
+
+    return RedirectResponse(url="/mechanic/storage", status_code=status.HTTP_302_FOUND)
+
+
 def convert_repairs(repairs: List[models.Repair]):
     repair_dates = []
     for repair in repairs:
