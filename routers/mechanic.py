@@ -112,6 +112,12 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
     used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
         models.PartsInRepair.repair_id == repair_id).all()
 
+    for part in used_parts:
+        for repair in part.repairs:
+            if repair.repair_id != repair_id:
+                repair_index = part.repairs.index(repair)
+                part.repairs.pop(repair_index)
+
     repair = db.query(models.Repair).filter(
         models.Repair.id == repair_id).first()
     customer = db.query(models.User).filter(
@@ -127,8 +133,7 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
 
 @router.post("/repairs/{repair_id}", response_class=HTMLResponse)
 async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: int = Form(...),
-                                    quantity: int = Form(...), start_of_repair: str = Form(...),
-                                    end_of_repair: str = Form(...), db: Session = Depends(get_db)):
+                                    quantity: int = Form(...), db: Session = Depends(get_db)):
     """Post request for adding to the DB new part used in repair_id or change date"""
 
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
@@ -217,6 +222,54 @@ async def change_date_of_repair(request: Request, repair_id: int, db: Session = 
         msg = 'Zaktualizowano naprawę'
     except Exception as err:
         msg = f"błąd podczas zmiany: {err}"
+
+    url = f"/mechanic/repairs/{repair_id}"
+    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
+
+
+@router.post("/repairs/{repair_id}/{used_part_id}", response_class=HTMLResponse)
+async def change_amount_of_used_parts(request: Request, repair_id: int, used_part_id: int,
+                                      new_amount: int = Form(...), db: Session = Depends(get_db)):
+    """Post request for changing amount of used parts in specific repair"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    part_in_repair = db.query(models.PartsInRepair).filter(
+        models.PartsInRepair.repair_id == repair_id).filter(models.PartsInRepair.part_id == used_part_id).first()
+
+    # change repair date
+    part_in_repair.quantity = new_amount
+
+    try:
+        db.add(part_in_repair)
+        db.commit()
+        msg = 'Zmieniono'
+    except Exception as err:
+        msg = f"błąd: {err}"
+
+    url = f"/mechanic/repairs/{repair_id}"
+    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
+
+
+@router.post("/repairs/{repair_id}/delete_part/{used_part_id}", response_class=HTMLResponse)
+async def remove_part_from_repair(request: Request, repair_id: int, used_part_id: int, db: Session = Depends(get_db)):
+    """Post request removing used part in specific repair"""
+
+    redirection = check_user_role_and_redirect(request, db, 'mechanic')
+    if redirection["is_needed"]:
+        return redirection['redirection']
+
+    part_in_repair = db.query(models.PartsInRepair).filter(
+        models.PartsInRepair.repair_id == repair_id).filter(models.PartsInRepair.part_id == used_part_id).first()
+
+    try:
+        db.delete(part_in_repair)
+        db.commit()
+        msg = 'Zmieniono'
+    except Exception as err:
+        msg = f"błąd: {err}"
 
     url = f"/mechanic/repairs/{repair_id}"
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)

@@ -54,6 +54,6 @@ async def home_page(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("home.html", {"request": request, "user": user})
 
 
-@app.exception_handler(404)
-async def not_found_exception_handler(request: Request, exc: HTTPException):
-    return RedirectResponse('/')
+# @app.exception_handler(404)
+# async def not_found_exception_handler(request: Request, exc: HTTPException):
+#     return RedirectResponse('/')

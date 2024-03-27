@@ -43,16 +43,24 @@
 <div class="wrapper" style="background: gainsboro; padding-left: 7em;">
     <div style="display: inline-block; width: 29.5%; min-width: 200px;">Nazwa części</div>
     <div style="display: inline-block; width: 30%; min-width: 200px;">Ilość</div>
-    <div style="display: inline-block; width: 20%; min-width: 200px;">Kwota</div>
+    <div style="display: inline-block; width: 20%; min-width: 200px;">Cena za sztukę</div>
 </div>
 <div class="scrollable-mechanic-list">
     <ul>
         {% for used_part in used_parts %}
         <li class="car_part_box " style="list-style: none; padding: 1em;">
             <div class="wrapper" style="background: #ffc078; padding-left: 3em;">
-                <div style="display: inline-block; width: 30%; min-width: 200px;">{{ used_part.name }}</div>
-                <div style="display: inline-block; width: 30%; min-width: 200px;">TO BE ADDED</div>
-                <div style="display: inline-block; width: 30%; min-width: 200px;">{{ used_part.price }}</div>
+                <form method="post">
+                    <div style="display: inline-block; width: 30%; min-width: 200px;">{{ used_part.name }}</div>
+                    <input type="number"
+                        style="display: inline-block; width: 1.5rem; min-width: 100px; margin-right: 25%;"
+                        value={{used_part.repairs[0].quantity}} id="new_amount" name="new_amount" required>
+                    <div style="display: inline-block; min-width: 200px;">{{ used_part.price }}</div>
+                    <input style="display: inline-block;" type="submit" formaction="{{repair.id}}/{{used_part.id}}"
+                        name="change" value="Zmień ilość">
+                    <input style="display: inline-block;" type="submit"
+                        formaction="{{repair.id}}/delete_part/{{used_part.id}}" name="delete" value="Usuń część">
+                </form>
             </div>
         </li>
         {% endfor %}
