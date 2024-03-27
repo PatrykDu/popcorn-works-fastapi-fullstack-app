@@ -118,6 +118,10 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
                 repair_index = part.repairs.index(repair)
                 part.repairs.pop(repair_index)
 
+    total_price = 0
+    for part in used_parts:
+        total_price += (part.repairs[0].quantity * part.price)
+
     repair = db.query(models.Repair).filter(
         models.Repair.id == repair_id).first()
     customer = db.query(models.User).filter(
@@ -128,7 +132,8 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
                                                                    "all_parts": all_parts,
                                                                    "used_parts": used_parts,
                                                                    "customer": customer,
-                                                                   "repair": repair})
+                                                                   "repair": repair,
+                                                                   "total_price": total_price})
 
 
 @router.post("/repairs/{repair_id}", response_class=HTMLResponse)
@@ -139,25 +144,12 @@ async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: i
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
     if redirection["is_needed"]:
         return redirection['redirection']
-    user_decoded = get_current_user(request)
-    user = db.query(models.User).filter(
-        models.User.username == user_decoded['username']).first()
-
-    all_parts = db.query(models.Part).all()
-
-    repair = db.query(models.Repair).filter(
-        models.Repair.id == repair_id).first()
-    customer = db.query(models.User).filter(
-        models.User.id == repair.customer_id).first()
 
     # add new part to repair
     parts_in_repair_model = models.PartsInRepair()
     parts_in_repair_model.part_id = part_id
     parts_in_repair_model.repair_id = repair_id
     parts_in_repair_model.quantity = quantity
-
-    used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
-        models.PartsInRepair.repair_id == repair_id).all()
 
     try:
         db.add(parts_in_repair_model)
@@ -166,13 +158,8 @@ async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: i
     except Exception as err:
         msg = f"błąd podczas dodawania: {err}"
 
-    return templates.TemplateResponse("repairs_mechanic_id.html", {"request": request,
-                                                                   "user": user,
-                                                                   "all_parts": all_parts,
-                                                                   "used_parts": used_parts,
-                                                                   "customer": customer,
-                                                                   "repair": repair,
-                                                                   "msg": msg})
+    url = f"/mechanic/repairs/{repair_id}"
+    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
 
 @router.post("/repairs/{repair_id}/change_date", response_class=HTMLResponse)
