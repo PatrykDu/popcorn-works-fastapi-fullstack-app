@@ -2,9 +2,27 @@
 
 <!-- add a new part -->
 <div style="background: gainsboro; margin-bottom: 3em; margin-top: 1em;">
-    <p><b>Klient: </b>{{ customer.first_name }} {{ customer.last_name }}</p>
-    <p><b>Data naprawy: </b>{{repair.start_date}} <b>-</b> {{repair.end_date}}</p>
+    <div style="display: inline-block">
+        <p style="margin-left: 5rem;"><b>Klient: </b>{{ customer.first_name }} {{ customer.last_name }}</p>
+        <form action="{{repair.id}}/change_date" method="post" style="display: inline-block; margin-left: 5rem;">
+            <label for="start_of_repair">Start Naprawy:</label>
+            <input type="date" value="{{repair.start_date}}" id="start_of_repair" name="start_of_repair">
+            <label for="end_of_repair">Koniec Naprawy:</label>
+            <input type="date" value="{{repair.end_date}}" id="end_of_repair" name="end_of_repair">
+            <input style="display: inline-block; padding-top: 1.5em;" type="submit" value="Zmień datę">
+        </form>
+    </div>
+    <form action="{{repair.id}}/activate" method="post"
+        style="display: inline-block; position: fixed; left: 50%; top: 7rem; transform: translate(-50%, -50%);">
+        {% if repair.active == True %}
+        <input style="display: inline-block; padding-top: 1.5em; background-color: #3fa33b;" type="submit"
+            value="Naprawa jest aktywna, kliknij aby dezaktywować">
+        {% else %}
+        <input style="display: inline-block; padding-top: 1.5em; background-color: #ff1212;" type="submit"
+            value="Naprawa nieaktywna, kliknij aby aktywować naprawę">
+        {% endif %}
 </div>
+</form>
 
 <div style="background: #f39f32; margin-bottom: 3em; margin-top: 1em;">
     <div style="text-align: center;"><strong>Dodaj nową część użytą do naprawy {{ repair.car_name }}</strong></div>
