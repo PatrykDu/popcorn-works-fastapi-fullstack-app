@@ -94,7 +94,7 @@ async def add_new_repair(request: Request, car_name: str = Form(...), customer_i
     except Exception as err:
         msg = f"błąd podczas dodawania: {err}"
 
-    return templates.TemplateResponse("repairs_mechanic.html", {"request": request, "user": user, "msg": msg})
+    return RedirectResponse(url="/mechanic/repairs", status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/repairs/{repair_id}", response_class=HTMLResponse)
