@@ -17,7 +17,8 @@
         <li class="car_part_box " style="list-style: none; padding: 1em;">
             <div class="wrapper" style="background: #ffc078; padding-left: 3em;">
                 <div style="display: inline-block; width: 30%; min-width: 200px;">{{ used_part.name }}</div>
-                <div style="display: inline-block; width: 30%; min-width: 200px;">TO BE ADDED</div>
+                <div style="display: inline-block; width: 30%; min-width: 200px;">{{used_part.repairs[0].quantity}}
+                </div>
                 <div style="display: inline-block; width: 30%; min-width: 200px;">{{ used_part.price }}</div>
             </div>
         </li>
@@ -25,6 +26,6 @@
     </ul>
 </div>
 <div>
-    Total Price: {{repair.money}}
+    Total Price: {{total_price}}
 </div>
 {% endif %}

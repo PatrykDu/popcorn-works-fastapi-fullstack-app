@@ -78,13 +78,24 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
         used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
             models.PartsInRepair.repair_id == repair_id).all()
 
+    for part in used_parts:
+        for repair in part.repairs:
+            if repair.repair_id != repair_id:
+                repair_index = part.repairs.index(repair)
+                part.repairs.pop(repair_index)
+
+        total_price = 0
+        for part in used_parts:
+            total_price += (part.repairs[0].quantity * part.price)
+
         repair = db.query(models.Repair).filter(
             models.Repair.id == repair_id).first()
 
         return templates.TemplateResponse("repairs_customer_id.html", {"request": request,
                                                                        "user": user,
                                                                        "used_parts": used_parts,
-                                                                       "repair": repair})
+                                                                       "repair": repair,
+                                                                       "total_price": total_price})
 
 
 def convert_repairs(repairs: List[models.Repair]):
