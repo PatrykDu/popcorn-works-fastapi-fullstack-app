@@ -98,7 +98,7 @@ async def add_new_repair(request: Request, car_name: str = Form(...), customer_i
 
 
 @router.get("/repairs/{repair_id}", response_class=HTMLResponse)
-async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Session = Depends(get_db)):
+async def repairs_id_page_for_mechanic(request: Request, repair_id: int, filltered_sentance: str = "", db: Session = Depends(get_db)):
     """Get request for repair_id page"""
 
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
@@ -107,8 +107,21 @@ async def repairs_id_page_for_mechanic(request: Request, repair_id: int, db: Ses
     user_decoded = get_current_user(request)
     user = db.query(models.User).filter(
         models.User.username == user_decoded['username']).first()
+    all_parts = []
+    found_parts = db.query(models.Part).all()
+    if filltered_sentance == "":
+        all_parts = found_parts
+    else:
+        phrases = filltered_sentance.split(' ')
+        searched_phrases = [phrase.casefold() for phrase in phrases]
+        for part in found_parts:
+            part_words: List[str] = part.name.split(' ')
+            part_words = [word.casefold() for word in part_words]
+            if any(phrase in searched_phrases for phrase in part_words):
+                all_parts.append(part)
+    
 
-    all_parts = db.query(models.Part).all()
+
     used_parts = db.query(models.Part).join(models.PartsInRepair, models.Part.id == models.PartsInRepair.part_id).filter(
         models.PartsInRepair.repair_id == repair_id).all()
 
@@ -144,7 +157,7 @@ async def add_new_part_to_repair_id(request: Request, repair_id: int, part_id: i
     redirection = check_user_role_and_redirect(request, db, 'mechanic')
     if redirection["is_needed"]:
         return redirection['redirection']
-
+   
     # add new part to repair
     parts_in_repair_model = models.PartsInRepair()
     parts_in_repair_model.part_id = part_id
